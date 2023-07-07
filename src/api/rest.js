@@ -4,6 +4,7 @@ const Endpoint = {
     Testing: "testing",
     Tenant: "tenants",
     Subscriptions: "subscriptions",
+    Billing: "billing",
 }
 
 export const HttpCode = {
@@ -46,3 +47,14 @@ export const getTenantDetail = (tenantId) =>  fetch(
     },
     credentials: 'include',
 })
+
+export const postManageBilling = (tenantId) =>  fetch(
+    `${BaseUrl}/${Endpoint.Subscriptions}/${Endpoint.Billing}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-TENANT-ID': tenantId,
+        },
+        body: JSON.stringify({})
+    }
+)

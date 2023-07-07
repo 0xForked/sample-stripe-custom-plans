@@ -1,11 +1,13 @@
 import React from "react";
 import {useNavigate} from "react-router-dom";
-import {getTenantDetail,  HttpCode} from "../api/rest";
+import {getTenantDetail, HttpCode, postManageBilling} from "../api/rest";
 
 export default function Home(props) {
     const navigate = useNavigate()
     const [isProceed, setIsProceed] = React.useState(false)
     const [tenant, setTenantData] = React.useState(null)
+    const [isProceedManageBilling, setIsProceedManageBilling] = React.useState(false)
+    const [manageBillingButtonText, setManageBillingButtonText] = React.useState("Manage Billing")
 
     React.useEffect(() => {
         if (!props.tenantId)  {
@@ -29,7 +31,6 @@ export default function Home(props) {
                                 break
                         }
                     }
-                    console.log(resp.data)
                     setTenantData(resp.data)
                 })
             })
@@ -43,6 +44,33 @@ export default function Home(props) {
             })
     }, [props, navigate])
 
+    const requestManageBilling = () => {
+        setIsProceedManageBilling(true)
+        setManageBillingButtonText("Please wait . . .")
+        postManageBilling(props.tenantId)
+            .then((response) => {
+                response.json().then(resp => {
+                    if (resp.error && resp.code === HttpCode.StatusBadRequest) {
+                        console.log(`error sob ${resp.data}`)
+                    }
+
+                    if (!resp.error && resp.code === HttpCode.StatusOK) {
+                        console.log(resp.data)
+                        window.location.href = resp?.data?.url
+                    }
+                })
+            })
+            .catch((error) => {
+                error.response.json().then(errorData => {
+                    console.log('Error data:', errorData);
+                });
+            })
+            .finally(() => {
+                setIsProceedManageBilling(false)
+                setManageBillingButtonText("Manage Billing")
+            })
+    }
+
     return (
         <section className="dark:bg-gray-900">
             <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0 w-auto">
@@ -54,7 +82,9 @@ export default function Home(props) {
                         <h5 className="mb-1 text-xl font-medium text-gray-900 dark:text-white">{tenant?.name}</h5>
                         <span className="text-sm text-gray-500 dark:text-gray-400">{tenant?.description}</span>
                         <div className="flex mt-4 space-x-3 md:mt-6">
-                            <button className="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Manage Bills</button>
+                            <button className="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg disabled:bg-blue-400 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" onClick={requestManageBilling} disabled={isProceedManageBilling}>
+                                {manageBillingButtonText}
+                            </button>
                         </div>
                     </div>}
                 </div>
