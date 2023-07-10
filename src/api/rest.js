@@ -4,7 +4,7 @@ const Endpoint = {
     Testing: "testing",
     Tenant: "tenants",
     Subscriptions: "subscriptions",
-    Billing: "billing",
+    Manage: "manage",
 }
 
 export const HttpCode = {
@@ -49,7 +49,7 @@ export const getTenantDetail = (tenantId) =>  fetch(
 })
 
 export const postManageBilling = (tenantId) =>  fetch(
-    `${BaseUrl}/${Endpoint.Subscriptions}/${Endpoint.Billing}`, {
+    `${BaseUrl}/${Endpoint.Subscriptions}/${Endpoint.Manage}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

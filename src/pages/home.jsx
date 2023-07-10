@@ -7,7 +7,7 @@ export default function Home(props) {
     const [isProceed, setIsProceed] = React.useState(false)
     const [tenant, setTenantData] = React.useState(null)
     const [isProceedManageBilling, setIsProceedManageBilling] = React.useState(false)
-    const [manageBillingButtonText, setManageBillingButtonText] = React.useState("Manage Billing")
+    const [manageBillingButtonText, setManageBillingButtonText] = React.useState("Manage Subscription")
 
     React.useEffect(() => {
         if (!props.tenantId)  {
@@ -67,7 +67,7 @@ export default function Home(props) {
             })
             .finally(() => {
                 setIsProceedManageBilling(false)
-                setManageBillingButtonText("Manage Billing")
+                setManageBillingButtonText("Manage Subscription")
             })
     }
 

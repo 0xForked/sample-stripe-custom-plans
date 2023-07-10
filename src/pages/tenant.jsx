@@ -31,6 +31,8 @@ export default function Tenant(props) {
     });
     const [isProceed, setIsProceed] = React.useState(false)
     const [buttonText, setButtonText] = React.useState("")
+    const [isUploading, setIsUploading] = React.useState(false)
+    const [fileUpload, setFileUpload] = React.useState("")
 
     const navigate = useNavigate()
 
@@ -70,6 +72,16 @@ export default function Tenant(props) {
             })
     };
 
+    const uploadLogo = (event) => {
+        // TODO: Implement upload company logo
+        setIsUploading(true)
+        setTimeout(()=> {
+            const file = event.target.files[0];
+            setFileUpload(URL.createObjectURL(file));
+            setIsUploading(false)
+        }, 1000)
+    }
+
    return (
        <section className="bg-gray-50 dark:bg-gray-900">
            <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0 w-full">
@@ -79,6 +91,29 @@ export default function Tenant(props) {
                           Update Tenant Data
                        </h3>
                    </div>
+
+                   <div className="mb-5 text-center">
+                       <label
+                           htmlFor="fileInput"
+                           className="cursor-pointer inine-flex justify-between items-center focus:outline-none"
+                       >
+                           <div className="mx-auto flex items-center justify-center w-32 h-32 border rounded-full relative bg-gray-100 mb-4 shadow-inset">
+                               {isUploading
+                                   ? <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6 text-gray-400 animate-spin"><path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"/></svg>
+                                   : <img className={`object-cover rounded-full ${!fileUpload ? ' w-12 h-12 ' : 'w-32 h-32'}`} alt="company-log" src={!fileUpload ? "https://i.pinimg.com/736x/24/50/ae/2450ae69306cfbffc1260f3d74d7163b.jpg": fileUpload}/>
+                               }
+                           </div>
+                       </label>
+                       <input
+                           name="photo"
+                           id="fileInput"
+                           accept="image/*"
+                           className="hidden"
+                           type="file"
+                           onChange={e => uploadLogo(e)}
+                       />
+                   </div>
+
                    <form onSubmit={handleSubmit(onSubmit)}>
                        <div className="grid gap-4 mb-4 sm:grid-cols-2">
                            <div>
