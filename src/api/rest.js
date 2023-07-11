@@ -4,6 +4,7 @@ const Endpoint = {
     Testing: "testing",
     Tenant: "tenants",
     Subscriptions: "subscriptions",
+    Plans: "plans",
     Manage: "manage",
 }
 
@@ -17,43 +18,53 @@ export const HttpCode = {
     StatusInternalServerError: 500,
 }
 
-export const getValidationAccess = (tenantId) =>  fetch(
+export const getValidationAccess = (jwt) =>  fetch(
     `${BaseUrl}/${Endpoint.Testing}`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
-            'X-TENANT-ID': tenantId,
+            'Authorization': `Bearer ${jwt}`,
         },
         credentials: 'include',
     })
 
-export const postTenantDetail = (tenantId, form) =>  fetch(
+export const getPlans = (jwt) =>  fetch(
+    `${BaseUrl}/${Endpoint.Plans}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${jwt}`,
+        },
+        credentials: 'include',
+    })
+
+export const postTenantDetail = (jwt, form) =>  fetch(
     `${BaseUrl}/${Endpoint.Tenant}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'X-TENANT-ID': tenantId,
+            'Authorization': `Bearer ${jwt}`,
         },
         body: JSON.stringify(form)
     }
 )
 
-export const getTenantDetail = (tenantId) =>  fetch(
+export const getTenantDetail = (jwt) =>  fetch(
     `${BaseUrl}/${Endpoint.Tenant}`, {
     method: 'GET',
     headers: {
         'Content-Type': 'application/json',
-        'X-TENANT-ID': tenantId,
+        'Authorization': `Bearer ${jwt}`,
     },
     credentials: 'include',
 })
 
-export const postManageBilling = (tenantId) =>  fetch(
+export const postManageBilling = (jwt) =>  fetch(
     `${BaseUrl}/${Endpoint.Subscriptions}/${Endpoint.Manage}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'X-TENANT-ID': tenantId,
+            'Authorization': `Bearer ${jwt}`,
         },
         body: JSON.stringify({})
     }

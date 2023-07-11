@@ -3,7 +3,7 @@ import {getValidationAccess, HttpCode} from "../api/rest";
 import {useNavigate} from "react-router-dom";
 
 export default function Auth(props) {
-    const [tenantId, setTenantId] = React.useState("")
+    const [jwt, setJWT] = React.useState("")
     const [isProceed, setIsProceed] = React.useState(false)
     const [isError, setIsError] = React.useState(false)
     const [formMessage, setFormMessage] = React.useState("")
@@ -11,24 +11,24 @@ export default function Auth(props) {
     const navigate = useNavigate()
 
     React.useEffect(() => {
-        setTenantId("")
+        setJWT("")
         setIsError(false)
         setIsProceed(false)
-        setFormMessage("Enter your tenant id. . .")
-        setButtonText("Validate Tenant")
+        setFormMessage("Enter your access token (JWT) . . .")
+        setButtonText("Validate Access")
     }, [])
 
     function doValidate() {
-        if (tenantId === "") {
+        if (jwt === "") {
             setIsError(true)
-            setFormMessage("Tenant id is required.")
+            setFormMessage("Access Token (JWT) is required.")
             return
         }
 
         setIsProceed(true)
         setButtonText("Please wait...")
 
-        getValidationAccess(tenantId)
+        getValidationAccess(jwt)
             .then((response) => {
                 response.json().then(resp => {
                     if (resp.error && resp.code === HttpCode.StatusBadRequest && resp.data?.type === "redirect") {
@@ -36,20 +36,18 @@ export default function Auth(props) {
                         // eslint-disable-next-line default-case
                         switch (resp.data?.redirect_path) {
                             case "/tenant-detail-form":
-                                props.callback(tenantId, "", "")
+                                props.callback(jwt)
                                 navigate("/tenant")
                                 break
                             case "/tenant-plans":
-                                props.callback(tenantId,
-                                    resp.data?.stripe_pricing_table_key,
-                                    resp.data?.stripe_publishable_key)
+                                props.callback(jwt)
                                 navigate("/plans")
                                 break
                         }
                     }
 
                     if (!resp.error && resp.code === HttpCode.StatusOK) {
-                        props.callback(tenantId, "", "")
+                        props.callback(jwt)
                         navigate("/home")
                     }
                 })
@@ -61,9 +59,9 @@ export default function Auth(props) {
             })
             .finally(() => {
                 setIsError(false)
-                setFormMessage("Enter your tenant id. . .")
+                setFormMessage("Enter your access token (JWT) . . .")
                 setIsProceed(false)
-                setButtonText("Validate Tenant")
+                setButtonText("Validate Access")
              })
     }
 
@@ -75,8 +73,8 @@ export default function Auth(props) {
                     <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
                         <form className="space-y-4 md:space-y-6" action="#">
                             <div>
-                                <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tenant ID</label>
-                                <input type="text" name="tenant_id" id="tenant_id" className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-2" placeholder="8a7b039d-5431-45ca-a2ab-a2b7fe71751a" required value={tenantId} onChange={ e => setTenantId(e.currentTarget.value)}/>
+                                <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">You Access Token</label>
+                                <input type="text" name="tenant_id" id="tenant_id" className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-2" placeholder="access token . . . " required value={jwt} onChange={ e => setJWT(e.currentTarget.value)}/>
                                 <p className={`text-sm text-muted-foreground ${isError ? "text-red-500" : "text-gray-500"}`}>{formMessage}</p>
                             </div>
                             <button type="submit" className="flex justify-center items-center w-full text-white bg-blue-600 disabled:bg-blue-400 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" onClick={doValidate} disabled={isProceed}>

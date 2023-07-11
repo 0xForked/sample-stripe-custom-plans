@@ -6,15 +6,9 @@ import Tenant from "./pages/tenant";
 import Plans from "./pages/plan";
 
 export default function App() {
-    const [tenantId, setTenantId] = useState("")
-    const [pricingTableId, setPricingTableId] = useState("")
-    const [publishableKey, setPublishableKey] = useState("")
+    const [jwt, setJWT] = useState("")
 
-    const pageCallback = (tenantId, pricingTableId, publishableKey) => {
-        setTenantId(tenantId)
-        setPricingTableId(pricingTableId)
-        setPublishableKey(publishableKey)
-    }
+    const pageCallback = (jwt) => setJWT(jwt)
 
     return (
         <BrowserRouter basename="/">
@@ -23,17 +17,13 @@ export default function App() {
                     <Auth callback={pageCallback}/>
                 } />
                 <Route path="/home" element= {
-                    <Home tenantId={tenantId} callback={pageCallback}/>
+                    <Home jwt={jwt}/>
                 } />
                 <Route path="/tenant" element={
-                    <Tenant tenantId={tenantId}/>
+                    <Tenant jwt={jwt} />
                 } />
                 <Route path="/plans" element={
-                    <Plans
-                        tenantId={tenantId}
-                        pricingTableId={pricingTableId}
-                        publishableKey={publishableKey}
-                    />
+                    <Plans jwt={jwt} />
                 } />
                 <Route path="*" element={<>Page Not Found</>} />
             </Routes>
