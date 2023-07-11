@@ -1,5 +1,5 @@
 import React from "react";
-import {getValidationAccess, HttpCode} from "../api/rest";
+import {getDashboard, HttpCode} from "../api/rest";
 import {useNavigate} from "react-router-dom";
 
 export default function Auth(props) {
@@ -28,27 +28,18 @@ export default function Auth(props) {
         setIsProceed(true)
         setButtonText("Please wait...")
 
-        getValidationAccess(jwt)
+        getDashboard(jwt)
             .then((response) => {
                 response.json().then(resp => {
+                    props.callback(jwt)
                     if (resp.error && resp.code === HttpCode.StatusBadRequest && resp.data?.type === "redirect") {
                         alert(`${resp.data?.type}: ${resp.data?.redirect_reason}`)
                         // eslint-disable-next-line default-case
                         switch (resp.data?.redirect_path) {
-                            case "/tenant-detail-form":
-                                props.callback(jwt)
-                                navigate("/tenant")
-                                break
-                            case "/tenant-plans":
-                                props.callback(jwt)
+                            case "/plans":
                                 navigate("/plans")
                                 break
                         }
-                    }
-
-                    if (!resp.error && resp.code === HttpCode.StatusOK) {
-                        props.callback(jwt)
-                        navigate("/home")
                     }
                 })
             })
@@ -62,7 +53,7 @@ export default function Auth(props) {
                 setFormMessage("Enter your access token (JWT) . . .")
                 setIsProceed(false)
                 setButtonText("Validate Access")
-             })
+            })
     }
 
     return (<>

@@ -1,6 +1,6 @@
 import React from "react";
 import {useNavigate} from "react-router-dom";
-import {getPlans, HttpCode} from "../api/rest";
+import {getPlans, HttpCode, postMakeSubscription} from "../api/rest";
 
 export default function Plans(props){
     const navigate = useNavigate()
@@ -11,15 +11,6 @@ export default function Plans(props){
     React.useEffect(() => {
         setIsPageLoading(true)
         setPlans([])
-
-        // setTimeout(() => {
-        //     setIsPageLoading(false)
-        // }, 1000)
-        // if (!props.jwt)  {
-        //     navigate("/")
-        // }
-        //
-
         getPlans(props.jwt)
             .then((response) => {
                 response.json().then(resp => {
@@ -53,7 +44,32 @@ export default function Plans(props){
                 });
             }
         });
-        console.log(stripeProductId, stripePricingId)
+
+        postMakeSubscription(props.jwt, {
+            "stripe_product_id": stripeProductId,
+            "stripe_price_id": stripePricingId
+        })
+            .then((response) => {
+                response.json().then(resp => {
+                    if (resp.error) {
+                        alert(`${resp.data?.type}: ${resp.data?.redirect_reason}`)
+                        return
+                    }
+
+                    if (!resp.error && resp.code === HttpCode.StatusCreated) {
+                        console.log(resp.data)
+                        window.location.href = resp?.data?.redirect_url
+                    }
+                })
+            })
+            .catch((error) => {
+                error.response.json().then(errorData => {
+                    alert(`Error data: ${errorData}`);
+                });
+            })
+            .finally(() => {
+                console.log("done")
+            })
     }
 
     return (

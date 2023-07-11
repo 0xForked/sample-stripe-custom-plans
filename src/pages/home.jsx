@@ -15,7 +15,8 @@ export default function Home(props) {
         }
 
         setIsProceed(true)
-        getTenantDetail(props.tenantId)
+
+        getTenantDetail(props.jwt)
             .then((response) => {
                 response.json().then(resp => {
                     if (resp.error && resp.code === HttpCode.StatusBadRequest && resp.data?.type === "redirect") {
