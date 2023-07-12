@@ -41,6 +41,7 @@ export default function Auth(props) {
                                 break
                         }
                     }
+                    navigate("/home")
                 })
             })
             .catch((error) => {

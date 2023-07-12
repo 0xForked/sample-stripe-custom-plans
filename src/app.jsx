@@ -7,7 +7,6 @@ import Plans from "./pages/plan";
 
 export default function App() {
     const [jwt, setJWT] = useState("")
-    const navigate = useNavigate()
     const pageCallback = (jwt) => setJWT(jwt)
 
     return (
@@ -28,13 +27,13 @@ export default function App() {
                 <Route path="/subscription-failed" element={
                     <>
                         Ohh no, why? . . .
-                        <button onClick={() => navigate("/")}>back home</button>
+                        <button onClick={() => window.location.href="/"}>back home</button>
                     </>
                 } />
                 <Route path="/subscription-success" element={
                     <>
                         Thanks for subscribe!
-                        <button onClick={() => navigate("/")}>back home</button>
+                        <button onClick={() =>  window.location.href="/"}>back home</button>
                     </>
                 } />
                 <Route path="*" element={<>Page Not Found</>} />
